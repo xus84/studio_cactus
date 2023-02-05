@@ -6,6 +6,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "dotenv": "^16.0.3",
     "eslint-config-next": "^13.0.4",
     "firebase": "^9.6.1",
     "next": "^13.0.4",

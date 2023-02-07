@@ -7,7 +7,7 @@ import profilePic from "../img/fingerprints-icons-5898.png";
 export default function Home({ imageUrl }) {
   const [images, setImages] = useState([]);
   const [showButton, setShowButton] = useState(false);
-
+  const [coords, setCoords] = useState({ x: 0, y: 0 });
   useEffect(() => {
     (async () => {
       const imageRef = collection(database, "materials");
@@ -46,29 +46,33 @@ export default function Home({ imageUrl }) {
     })();
   }, []);
 
+  const handleClick = (event) => {
+        setCoords({ x: event.clientX, y: event.clientY });
+      };
+
   return (
     <div>
       <div className="">
         <div className=""></div>
-        <div className="flex justify-center items-center h-screen">
-          <img src={imageUrl} />
+        <div className="relative  h-screen flex items-center justify-center">
+          <img  className="w-2/3 object-cover" src={imageUrl} />
           <Image
-            className="w-14"
+            className="w-14 absolute top-0 right-0"
             src={profilePic}
             alt="Picture of the author"
           />
           <Image
-            className="w-14"
+            className="w-14 absolute top-0 right-0"
             src={profilePic}
             alt="Picture of the author"
           />
           <Image
-            className="w-14"
+            className="w-14 absolute top-0 right-0"
             src={profilePic}
             alt="Picture of the author"
           />
           <Image
-            className="w-14"
+            className="w-14 absolute top-0 right-0"
             src={profilePic}
             alt="Picture of the author"
           />
@@ -90,6 +94,10 @@ export default function Home({ imageUrl }) {
           )}
         </div>
       </div>
+      <div onClick={handleClick}>
+      <p>Click anywhere in this area to see the x and y coordinates:</p>
+      <p>x: {coords.x}, y: {coords.y}</p>
+    </div>
 
       <h4>layers</h4>
       {images.map((image, index) => (

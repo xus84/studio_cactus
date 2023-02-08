@@ -6,8 +6,9 @@ import profilePic from "../img/fingerprints-icons-5898.png";
 
 export default function Home({ imageUrl }) {
   const [images, setImages] = useState([]);
-  const [showButton, setShowButton] = useState(false);
+  const [showImages, setShowImages] = useState(false);
   const [coords, setCoords] = useState({ x: 0, y: 0 });
+
   useEffect(() => {
     (async () => {
       const imageRef = collection(database, "materials");
@@ -45,59 +46,78 @@ export default function Home({ imageUrl }) {
             }  */
     })();
   }, []);
+  const handleMouseEnter = () => {
+    setShowImages(true);
+  };
+
+  const handleMouseLeave = () => {
+    setShowImages(false);
+  };
 
   const handleClick = (event) => {
-        setCoords({ x: event.clientX, y: event.clientY });
-      };
+    setCoords({ x: event.clientX, y: event.clientY });
+  };
 
   return (
     <div>
-      <div className="">
-        <div className=""></div>
-        <div className="relative  h-screen flex items-center justify-center">
-          <img  className="w-2/3 object-cover" src={imageUrl} />
-          <Image
-            className="w-14 absolute top-0 right-0"
-            src={profilePic}
-            alt="Picture of the author"
-          />
-          <Image
-            className="w-14 absolute top-0 right-0"
-            src={profilePic}
-            alt="Picture of the author"
-          />
-          <Image
-            className="w-14 absolute top-0 right-0"
-            src={profilePic}
-            alt="Picture of the author"
-          />
-          <Image
-            className="w-14 absolute top-0 right-0"
-            src={profilePic}
-            alt="Picture of the author"
-          />
-        </div>
-
-        <div className=""></div>
-        <div
-          onMouseEnter={() => setShowButton(true)}
-          onMouseLeave={() => setShowButton(false)}
-        >
-          {showButton && (
-            <button
-              onClick={() => {
-                console.log("hi");
-              }}
-            >
-              Click me!
-            </button>
-          )}
-        </div>
+      <div className="h-screen flex">
+        <div className="w-1/6"></div>
+        <img
+          className="w-4/6 relative"
+          src={imageUrl}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        />
+        <div className="w-1/6"></div>
       </div>
+
+      {showImages && (
+        <div className="hidden-content">
+          <Image
+            className="w-14 absolute bottom-2.5rem left-35rem"
+            src={profilePic}
+            alt="Picture of the author"
+            style={{
+              bottom: "2.5rem",
+              left: "35rem",
+            }}
+          />
+          <Image
+            className="w-14 absolute "
+            src={profilePic}
+            alt="Picture of the author"
+            style={{
+              bottom: "14.5rem",
+              right: "36rem",
+            }}
+          />
+          <Image
+            className="w-14 absolute "
+            src={profilePic}
+            alt="Picture of the author"
+            style={{
+              top: "17.5rem",
+              right: "31rem",
+            }}
+          />
+          <Image
+            className="w-14 absolute"
+            src={profilePic}
+            alt="Picture of the author"
+            style={{
+              top: "14rem",
+              right: "26rem",
+            }}
+          />
+        </div>
+      )}
+
       <div onClick={handleClick}>
-      <p>Click anywhere in this area to see the x and y coordinates:</p>
-      <p>x: {coords.x}, y: {coords.y}</p>
-    </div>
+        <p>Click anywhere in this area to see the x and y coordinates:</p>
+        <p>
+          x: {coords.x}, y: {coords.y}
+        </p>
+      </div>
 
       <h4>layers</h4>
       {images.map((image, index) => (

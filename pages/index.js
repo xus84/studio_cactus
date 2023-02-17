@@ -3,6 +3,7 @@ import { collection, getDocs } from 'firebase/firestore'
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import profilePic from '../img/fingerprints-icons-5898.png'
+//import LayersContainer from '../components/Layers.container'
 
 export default function Home ({ imageUrl }) {
   const [images, setImages] = useState([])
@@ -118,7 +119,7 @@ export default function Home ({ imageUrl }) {
           x: {coords.x}, y: {coords.y}
         </p>
       </div>
-
+           {/*  <LayersContainer/> */}
       <h4>layers</h4>
       {images.map((image, index) => (
         <img

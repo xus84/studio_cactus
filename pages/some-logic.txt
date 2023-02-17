@@ -1,0 +1,153 @@
+Here's an outline of how you could structure the application:
+
+Create a Kitchen component that serves as the top-level component for the application. This component should have state to keep track of the currently selected material and layer, and should render the base image of the kitchen along with buttons for selecting materials and layers.
+Inside the Kitchen component, create two child components: MaterialSelector and LayerSelector. These components should receive the currently selected material and layer as props, and should render buttons that allow the user to select a new material or layer. When a button is clicked, the MaterialSelector or LayerSelector component should update the selected material or layer in the Kitchen component's state by calling a callback function that is passed down as a prop.
+Use the useContext hook to create a context that provides access to the current material and layer throughout the application. Wrap the Kitchen component in this context provider so that its children can access the selected material and layer.
+Use the useEffect hook to fetch the materials and layers from Firebase when the Kitchen component mounts. Store the retrieved data in state using the useState hook. To retrieve the materials and layers, you could create functions that make the appropriate queries to Firebase and return the data.
+Create a Layer component that receives the selected layer and the list of points associated with that layer as props. This component should render an image that corresponds to the selected layer, and should position the points on the image based on their coordinates.
+Create a Material component that receives the selected material and the list of points associated with that material as props. This component should render an image of the material and position it on the base image at the coordinates of the associated points.
+Inside the Kitchen component, use conditional rendering to show either the Layer or Material component, depending on which button the user has clicked. When the user clicks a material or layer button, update the state to reflect the new selection, and pass the selected points to the appropriate child component as props.
+
+Here's some pseudocode to help illustrate these steps:
+
+// Kitchen component
+function Kitchen() {
+  const [selectedMaterial, setSelectedMaterial] = useState(null);
+  const [selectedLayer, setSelectedLayer] = useState(null);
+  const [materials, setMaterials] = useState([]);
+  const [layers, setLayers] = useState([]);
+
+  // Fetch materials and layers from Firebase
+  useEffect(() => {
+    // Fetch materials
+    const fetchMaterials = async () => {
+      const materialsCollection = firebase.firestore().collection('materials');
+      const snapshot = await materialsCollection.get();
+      const materialsData = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      setMaterials(materialsData);
+    };
+    fetchMaterials();
+
+    // Fetch layers
+    const fetchLayers = async () => {
+      const layersCollection = firebase.firestore().collection('layers');
+      const snapshot = await layersCollection.get();
+      const layersData = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      setLayers(layersData);
+    };
+    fetchLayers();
+  }, []);
+
+  return (
+    <KitchenContext.Provider value={{ selectedMaterial, selectedLayer }}>
+      <div>
+        <img src="kitchen-base-image.jpg" alt="Kitchen base image" />
+
+        <MaterialSelector
+          materials={materials}
+          selectedMaterial={selectedMaterial}
+          onMaterialSelect={setSelectedMaterial}
+        />
+
+        <LayerSelector
+          layers={layers}
+          selectedLayer={selectedLayer}
+                 onLayerSelect={setSelectedLayer}
+        />
+
+        {selectedMaterial ? (
+          <Material
+            material={selectedMaterial}
+            points={selectedMaterial.points}
+          />
+        ) : null}
+
+        {selectedLayer ? (
+          <Layer
+            layer={selectedLayer}
+            points={selectedLayer.points}
+          />
+        ) : null}
+      </div>
+    </KitchenContext.Provider>
+  );
+}
+
+// LayerSelector component
+function LayerSelector({ layers, selectedLayer, onLayerSelect }) {
+  return (
+    <div>
+      {layers.map((layer) => (
+        <button
+          key={layer.id}
+          onClick={() => onLayerSelect(layer)}
+          className={selectedLayer === layer ? 'selected' : ''}
+        >
+          {layer.name}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// MaterialSelector component
+function MaterialSelector({ materials, selectedMaterial, onMaterialSelect }) {
+  return (
+    <div>
+      {materials.map((material) => (
+        <button
+          key={material.id}
+          onClick={() => onMaterialSelect(material)}
+          className={selectedMaterial === material ? 'selected' : ''}
+        >
+          {material.name}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// Layer component
+function Layer({ layer, points }) {
+  return (
+    <div>
+      <img src={layer.imageUrl} alt={layer.name} />
+      {points.map((point) => (
+        <div key={point.id} style={{ position: 'absolute', left: point.x, top: point.y }}>
+          {/* render point on the image */}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// Material component
+function Material({ material, points }) {
+  return (
+    <div>
+      <img src={material.imageUrl} alt={material.name} />
+      {points.map((point) => (
+        <div key={point.id} style={{ position: 'absolute', left: point.x, top: point.y }}>
+          {/* render material on the image */}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+- pages/
+  - index.js
+- components/
+  - Kitchen.js
+  - Layer.js
+  - LayerSelector.js
+  - Material.js
+  - MaterialSelector.js
+- hooks/
+  - useKitchen.js
+- firebase/
+  - config.js
+
+  In this structure, pages/index.js is your main Next.js page that renders the Kitchen component. The components folder contains all of the individual components used in the application, including Layer, LayerSelector, Material, and MaterialSelector. The hooks folder contains the custom hook useKitchen, which contains the shared state and logic for the application.
+The firebase folder contains the config.js file, which exports the Firebase configuration for connecting to the Firebase project. This file is used by the useKitchen hook to initialize the Firebase app and Firestore.
+Of course, this is just one example structure that you could use, and you may need to adjust it depending on the specific needs of your project.

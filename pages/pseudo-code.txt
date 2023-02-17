@@ -1,0 +1,64 @@
+// Import necessary modules and dependencies
+import { useState, useEffect } from 'react'
+import firebase from 'firebase/app'
+import 'firebase/firestore'
+import { firebaseConfig } from '../firebase/config'
+
+// Set up Firebase connection with provided credentials
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig)
+}
+
+// Define a functional component that retrieves the collections from Firestore
+const FirebaseCollections = () => {
+  // Initialize state variables to hold point coordinates and material data
+  const [points, setPoints] = useState([])
+  const [materials, setMaterials] = useState([])
+
+  // Define a useEffect hook to retrieve data from Firestore upon component mount
+  useEffect(() => {
+    // Create a reference to the "points" collection in Firestore
+    const pointsRef = firebase.firestore().collection('points')
+
+    // Retrieve all documents in the "points" collection and store them in state
+    pointsRef.get().then((querySnapshot) => {
+      const pointsData = []
+      querySnapshot.forEach((doc) => {
+        pointsData.push({ id: doc.id, ...doc.data() })
+      })
+      setPoints(pointsData)
+    })
+
+    // Create a reference to the "materials" collection in Firestore
+    const materialsRef = firebase.firestore().collection('materials')
+
+    // Retrieve all documents in the "materials" collection and store them in state
+    materialsRef.get().then((querySnapshot) => {
+      const materialsData = []
+      querySnapshot.forEach((doc) => {
+        materialsData.push({ id: doc.id, ...doc.data() })
+      })
+      setMaterials(materialsData)
+    })
+  }, [])
+
+  // Render the retrieved data in a typical React.js design pattern
+  return (
+    <div>
+      {points.map((point) => (
+        <div key={point.id}>
+          <h2>Point ID: {point.id}</h2>
+          <p>Coordinates: {point.coordinates}</p>
+          <h3>Materials:</h3>
+          <ul>
+            {materials.filter((material) => material.points.includes(point.id)).map((material) => (
+              <li key={material.id}>{material.name}</li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+export default FirebaseCollections

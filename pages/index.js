@@ -1,40 +1,40 @@
-import { app, database } from "../firebase/config";
-import { collection, getDocs } from "firebase/firestore";
-import { useState, useEffect } from "react";
-import Image from "next/image";
-import profilePic from "../img/fingerprints-icons-5898.png";
+import { database } from '../firebase/config'
+import { collection, getDocs } from 'firebase/firestore'
+import { useState, useEffect } from 'react'
+import Image from 'next/image'
+import profilePic from '../img/fingerprints-icons-5898.png'
 
-export default function Home({ imageUrl }) {
-  const [images, setImages] = useState([]);
-  const [showImages, setShowImages] = useState(false);
-  const [coords, setCoords] = useState({ x: 0, y: 0 });
+export default function Home ({ imageUrl }) {
+  const [images, setImages] = useState([])
+  const [showImages, setShowImages] = useState(false)
+  const [coords, setCoords] = useState({ x: 0, y: 0 })
 
   useEffect(() => {
     (async () => {
-      const imageRef = collection(database, "materials");
-      const point = collection(database, "points");
-      const snapshots = await getDocs(imageRef);
-      const pointshots = await getDocs(point);
+      const imageRef = collection(database, 'materials')
+      const point = collection(database, 'points')
+      const snapshots = await getDocs(imageRef)
+      const pointshots = await getDocs(point)
 
-      console.log(pointshots);
+      console.log(pointshots)
 
       if (images) {
         const docs = snapshots.docs.map((doc) => {
-          const data = doc.data();
-          data.id = doc.id;
-          return data;
-        });
-        setImages(docs);
+          const data = doc.data()
+          data.id = doc.id
+          return data
+        })
+        setImages(docs)
       } else {
-        return;
+        return
       }
       if (images) {
         const layersMaterial = snapshots.docs.map((doc) => {
-          const dataLayer = doc.data();
-          dataLayer.id = doc.id;
-          return dataLayer;
-        });
-        console.log(layersMaterial);
+          const dataLayer = doc.data()
+          dataLayer.id = doc.id
+          return dataLayer
+        })
+        console.log(layersMaterial)
       }
 
       /*   if(images){
@@ -44,69 +44,69 @@ export default function Home({ imageUrl }) {
                       return xAndYshowed
               })
             }  */
-    })();
-  }, []);
+    })()
+  }, [])
   const handleMouseEnter = () => {
-    setShowImages(true);
-  };
+    setShowImages(true)
+  }
 
   const handleMouseLeave = () => {
-    setShowImages(false);
-  };
+    setShowImages(false)
+  }
 
   const handleClick = (event) => {
-    setCoords({ x: event.clientX, y: event.clientY });
-  };
+    setCoords({ x: event.clientX, y: event.clientY })
+  }
 
   return (
     <div>
-      <div className="h-screen flex">
-        <div className="w-1/6"></div>
+      <div className='h-screen flex'>
+        <div className='w-1/6' />
         <img
-          className="w-4/6 relative"
+          className='w-4/6 relative'
           src={imageUrl}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         />
-        <div className="w-1/6"></div>
+        <div className='w-1/6' />
       </div>
 
       {showImages && (
-        <div className="hidden-content">
+        <div className='hidden-content'>
           <Image
-            className="w-14 absolute bottom-2.5rem left-35rem"
+            className='w-14 absolute bottom-2.5rem left-35rem'
             src={profilePic}
-            alt="Picture of the author"
+            alt='Picture of the author'
             style={{
-              bottom: "2.5rem",
-              left: "35rem",
+              bottom: '2.5rem',
+              left: '35rem'
             }}
           />
           <Image
-            className="w-14 absolute "
+            className='w-14 absolute '
             src={profilePic}
-            alt="Picture of the author"
+            alt='Picture of the author'
             style={{
-              bottom: "14.5rem",
-              right: "36rem",
+              bottom: '14.5rem',
+              right: '36rem'
             }}
           />
           <Image
-            className="w-14 absolute "
+            className='w-14 absolute '
             src={profilePic}
-            alt="Picture of the author"
+            alt='Picture of the author'
             style={{
-              top: "17.5rem",
-              right: "31rem",
+              top: '17.5rem',
+              right: '31rem'
             }}
           />
           <Image
-            className="w-14 absolute"
+            className='w-14 absolute'
             src={profilePic}
-            alt="Picture of the author"
+            alt='Picture of the author'
             style={{
-              top: "14rem",
-              right: "26rem",
+              top: '14rem',
+              right: '26rem'
             }}
           />
         </div>
@@ -129,7 +129,7 @@ export default function Home({ imageUrl }) {
         />
       ))}
 
-      {/*     
+      {/*
                 <img src={images[0].layers['EnRd7hAaNydVdVJ06qgF'] width={300} height={300}}/>
             <img src={ images[1].layers['EnRd7hAaNydVdVJ06qgF']} width={300} height={300}/>
             <img src={images[2].layers['i7EVutewtycZY2qwmldG']} width={300} height={300}/>
@@ -144,32 +144,32 @@ export default function Home({ imageUrl }) {
 
       <h2>Kitchen materials</h2>
 
-      <div className="materials">
+      <div className='materials'>
         {images.map((image, id) => (
-          <div className="card_material" key={id}>
-            <div className="material_name">
-              <p>{image["name"]}</p>
+          <div className='card_material' key={id}>
+            <div className='material_name'>
+              <p>{image.name}</p>
             </div>
-            <img src={image["materialPreview"]} width="50rem" height="50rem" />
+            <img src={image.materialPreview} width='50rem' height='50rem' />
           </div>
         ))}
       </div>
     </div>
-  );
+  )
 }
 
-export async function getStaticProps() {
+export async function getStaticProps () {
   // Call an external API endpoint to get posts.
   // You can use any data fetching library
-  const res = await fetch(process.env.IMAGE);
-  const imageUrl = res.url;
-  //console.log(imageUrl);
+  const res = await fetch(process.env.IMAGE)
+  const imageUrl = res.url
+  // console.log(imageUrl);
 
   // By returning { props: { posts } }, the Blog component
   // will receive `posts` as a prop at build time
   return {
     props: {
-      imageUrl,
-    },
-  };
+      imageUrl
+    }
+  }
 }

@@ -2,3 +2,5 @@ name: "Pavimento", coordX: 40, coordY: 86;
 name: 'Encimera', coordX: 52, coordY: 55;
 name: 'Frente', coordX: 71, coordY: 38;
 name: 'Entrepaños', coordX: 61, coordY: 47;
+
+command to fix format:  `npx standard --fix`
